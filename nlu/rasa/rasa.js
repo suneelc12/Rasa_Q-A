@@ -7,7 +7,18 @@ const Entity = require('../entity.js');
 const Intent = require('../intent.js');
 
 
-const rasaModelName = '/default/model_20181022-121149';
+var path = require('path');
+var fs = require('fs');
+const dir = path.join(__dirname, '..', '..', 'models', 'default\\');
+//const dir = path.join(__dirname, 'default\\');
+console.log(dir);
+fs.readdirSync(dir).forEach(file => {
+    fs.statSync(dir + file).mtime;
+});
+var rasaModelName = fs.readdirSync(dir).sort(function (a, b) {
+    return Date.parse(fs.statSync(dir + a).mtime) < Date.parse(fs.statSync(dir + b).mtime);
+})[0];
+
 
 //model directory
 
@@ -34,13 +45,15 @@ function parse(message, callback) {
     console.log("Rasa Parse, message: " +message);
     request(createParseRequest(rasaModelName, message), function(error, response, body) {
         console.log('rasa: response - ', response && response.statusCode);
+        
         if (error) callback(error);
         if (body) callback(null, extractIntent(body), extractEntities(body));
     });
 }
 
 function extractIntent(body) {
-    return body.intent ? new Intent(body.intent.name) : null;
+    
+    return body.intent.name !== null ? (parseFloat(body.intent.confidence) > 0.6 ? new Intent(body.intent.name) : new Intent("Unclassified")) : new Intent(null);
 }
 
 function extractEntities(body) {
@@ -58,7 +71,6 @@ function extractEntities(body) {
 function createParseRequest(modelName, message) {
     return {
         method: 'POST',
-        //uri: 'http://localhost:3100/parse',
         uri: 'http://localhost:5000/parse',
         json: true,
         body: {
