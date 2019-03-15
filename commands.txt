@@ -1,3 +1,9 @@
 Check which process is using a port: sudo ss -lptn 'sport = :3100'
 Run the Node server in background (even when no shell is open): nohup sudo node index.js &
 Run the Rasa NLU server in background (even when no shell is open): nohup sudo python3.5 -m rasa_nlu.server -c config-spacy.json &
+
+################Run Rasa NLU server
+python -m rasa_nlu.server -c HRbot/config.yml --pre_load default/model_20181205-120840 --path models/
+
+###start backend server
+node index.js
