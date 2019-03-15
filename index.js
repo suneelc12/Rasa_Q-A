@@ -56,7 +56,7 @@ MongoClient.connect(db_url, { useNewUrlParser: true }, function (err, db) {
                     for (item in jsonobj) {
                         obj = jsonobj[item];
                         console.log(obj);
-                        console.log("jhhjvgjvgvgjvvgj");
+                        
                         // console.log(dbo.collection('legalfaq').countDocuments({ "Intent": obj.Intent, "Answer": obj.Answer }, { limit: 1 }));
                         var result = await dbo.collection('legalfaq').findOne({ "Intent": obj.Intent, "Answer": obj.Answer });
 
