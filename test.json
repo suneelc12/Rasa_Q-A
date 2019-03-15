@@ -1,0 +1,15 @@
+[
+  {
+    "intent": "Greeting",
+    "answer": "hi"
+  },
+  {
+    "intent": "bye",
+    "answer": "thankyou"
+  },
+  {
+    "intent": "hate",
+    "answer": "getlost"
+  }
+
+]

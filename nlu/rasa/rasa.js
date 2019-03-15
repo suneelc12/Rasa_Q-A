@@ -53,7 +53,7 @@ function parse(message, callback) {
 
 function extractIntent(body) {
     
-    return body.intent.name !== null ? (parseFloat(body.intent.confidence) > 0.6 ? new Intent(body.intent.name) : new Intent("Unclassified")) : new Intent(null);
+    return body.intent.name !== null ? (parseFloat(body.intent.confidence) > 0.6 ? new Intent(body.intent.name) : new Intent("Unclassified")) : new Intent("nointent");
 }
 
 function extractEntities(body) {

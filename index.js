@@ -7,11 +7,12 @@ const io = require('socket.io')(server);
 const classifier = require('./nlu/classifier.js');
 const MongoClient = require('mongodb').MongoClient;
 const deasync = require('deasync');
+var fs = require('fs');
+var csv = require('csvtojson');
 const bodyParser = require('body-parser');
 var trainingObj = require('./training.js');
-db_url = "mongodb://localhost:27017/botdb";
-
-
+var db_url = "mongodb://localhost:27017/botdb";
+var dir = './data/';
 
 //start the server
 //const child = require('child_process').exec('python -m rasa_nlu.server -c HRbot/config.yml --pre_load default/model_20181015-155713 --path models/');
@@ -33,22 +34,62 @@ const replyChannel = 'reply';
 
 app.use(bodyParser.json());
 app.use('/', express.static(path.join(__dirname + '/public')));
-//app.get('/', function (req, res) {
-//  res.sendFile(__dirname + '/public/index.html');
-//});
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
 
+MongoClient.connect(db_url, { useNewUrlParser: true }, function (err, db) {
+    if (err) throw err;
+    var dbo = db.db("botdb");
+    console.log("connected");
+    fs.readdir(dir, function (err, files) {
+        if (err) throw err;
+        files.forEach((file) => {
+            var csvfilepath = path.join(dir, file);
+            csv({
+                delimiter: "|"
+            }).fromFile(csvfilepath)
+                .then(async (jsonobj) => {
+                    //console.log(file + "content" + JSON.stringify(jsonobj));
+                    for (item in jsonobj) {
+                        obj = jsonobj[item];
+                        console.log(obj);
+                        console.log("jhhjvgjvgvgjvvgj");
+                        // console.log(dbo.collection('legalfaq').countDocuments({ "Intent": obj.Intent, "Answer": obj.Answer }, { limit: 1 }));
+                        var result = await dbo.collection('legalfaq').findOne({ "Intent": obj.Intent, "Answer": obj.Answer });
 
+                        if (result == null) {
+                            console.log("entered");
+                            dbo.collection("legalfaq").insert(obj);
+                            console.log("==####****###== inserted ", obj);
+
+                        }
+                        //    (err, result) => {
+                        //    console.log("result" + result);
+                        //    if (result == null) {
+                        //        console.log("entered");
+                        //        dbo.collection("legalfaq").insert(obj);
+                        //        console.log("==####****###== inserted ", obj);
+
+                        //    }
+
+                        //});
+                    }
+                    //db.close();
+                })
+                .catch((error) => { console.log(error); });
+        });
+
+    });
+});
 io.on('connection', function (socket) {
   console.log("User connected to Chatbot");
   //socket.emit(replyChannel, new Reply("init", JSON.parse('{"name": "init1"}'), "").toJson());
   socket.emit(replyChannel, new Reply("init", JSON.parse('{"name": "init2"}'), "").toJson());
-  socket.on(messageChannel, function (message, isUser, fn) { 
-      fn('Message arrived to the server'); //callback function
+  socket.on(messageChannel, function (message,fn) { 
+      //fn('Message arrived to the server'); //callback function
       sendToBot(message, socket);
       
   });
@@ -92,7 +133,7 @@ io.on('connection', function (socket) {
 
 var port = 8005;
 
-server.listen(port,'0.0.0.0',function () {
+server.listen(port,function () {
   console.log('Chatbot is listening on port ' + port + '!')
 });
 
@@ -105,6 +146,9 @@ sendToBot = function(message, socket){
     }
   });
 }
+
+
+
 
 //////////////
 var dataLayerObj = require('./public/datalayer.js');
