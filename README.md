@@ -1,7 +1,7 @@
 # Rasa/Nodejs Chatbot
 The project features a simple Rasa NLU based Chatbot developed with Node.js, Express and Socket.io as backend and HTML, CSS and Javascript with Jquery on the frontend side.
 
-![alt text](https://raw.githubusercontent.com/Gabryxx7/chatbot-node-rasa/master/imgs/screenshot1.PNG)
+![alt text](https://github.com/suneelc12/Rasa-Core/blob/master/imgs/screenshot1.PNG)
 
 # Backend
 The backend side is quite simple. The server uses Socket.io for the communication between the user and the bot, everytime someone accesses the website, it will create a new socket and will immediately send out greeting messages to the user.
@@ -13,7 +13,7 @@ sudo node index.js
 
 The server will then start and listen to messages on its channels:
 ```
-gabryxx7@chatbot:/home/chatBot$ sudo node index.js
+C:\Users\ramad\Downloads\Rasa-Core> sudo node index.js
 Chatbot is listening on port 8000!
 User connected to Chatbot
 Classifier Parse
@@ -72,16 +72,14 @@ Or, from the browser, you may send a request in this way:
 This is what you should see on the console:
 
 ```
-gabryxx7@chatbot:/home/chatBot/restaurantbot$ sudo python3.5 -m rasa_nlu.server -c config-spacy.json
-INFO:rasa_nlu.data_router:Logging requests to '/home/chatBot/restaurantbot/logs/rasa_nlu_log-20180310-142655-20252.log'.
-INFO:__main__:Started http server on port 3000
-2018-03-10 14:26:55+0000 [-] Log opened.
-2018-03-10 14:26:55+0000 [-] Site starting on 3000
-2018-03-10 14:26:55+0000 [-] Starting factory <twisted.web.server.Site object at 0x7f785713d588>
+C:\Users\ramad\Downloads\Rasa-Core>python -m rasa_nlu.server -c HRbot/nlu_config.yml --pre_load nlu --path model/current
+2019-04-23 15:29:05+0530 [-] Log opened.
+2019-04-23 15:29:05+0530 [-] Site starting on 5000
+2019-04-23 15:29:05+0530 [-] Starting factory <twisted.web.server.Site object at 0x0000027162BE4940>
 ```
 
 # Frontend
-![alt text](https://raw.githubusercontent.com/Gabryxx7/chatbot-node-rasa/master/imgs/screenshot2.PNG)
+![alt text](https://github.com/suneelc12/Rasa-Core/tree/master/imgs/screenshot1.PNG)
 
 The frontend is has some more trickery, mostly to give a nice feeling to the webapp. The server will always point to the `public` folder and would serve the file requested in the `index.html` file.
 The HTML structure is fairly simple, I added at the end a `message-template` div containing the HTML code for the single message bubble.
